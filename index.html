@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Multi Resume Analyzer</title>
+  <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" id="theme-style">
+  <style>
+    body.dark-mode {
+      background-color: #1a1a1a;
+      color: #ffffff;
+    }
+    /* Modal styling */
+    .modal {
+      display: none; /* Hidden by default */
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.5);
+    }
+    .modal-content {
+      background-color: #fff;
+      margin: 15% auto; /* 15% from top and centered */
+      padding: 20px;
+      border: 2px solid #007bff;
+      border-radius: 8px;
+      width: 80%;
+      max-width: 600px;
+      position: relative;
+    }
+    .modal-content p {
+      font-size: 1.1rem;
+      white-space: pre-wrap;
+    }
+    .close-modal {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      color: #aaa;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .close-modal:hover,
+    .close-modal:focus {
+      color: #000;
+      text-decoration: none;
+    }
+    /* Message Box styling (for input) */
+    #message-box {
+      display: none;
+      background-color: #fff;
+      border: 2px solid #007bff;
+      border-radius: 8px;
+      padding: 25px;
+      margin-bottom: 20px;
+      width: 90%;
+      max-width: 800px;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+      margin-left: auto;
+      margin-right: auto;
+    }
+    #message-box textarea {
+      width: 100%;
+      height: 300px;
+      padding: 15px;
+      font-size: 1.1rem;
+    }
+    #message-box .btn {
+      margin-top: 10px;
+    }
+    /* Flex container for buttons in results section */
+    .button-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+    .left-buttons {
+      display: flex;
+      gap: 10px;
+    }
+  </style>
+  <script>
+    let currentAction = "";
+    document.addEventListener("DOMContentLoaded", function() {
+      if (localStorage.getItem("dark-mode") === "enabled") {
+        document.body.classList.add("dark-mode");
+        document.getElementById("dark-mode-toggle").checked = true;
+      }
+    });
+    function toggleDarkMode() {
+      document.body.classList.toggle("dark-mode");
+      if (document.body.classList.contains("dark-mode")) {
+        localStorage.setItem("dark-mode", "enabled");
+      } else {
+        localStorage.setItem("dark-mode", "disabled");
+      }
+    }
+    function showMessageBox(action) {
+      currentAction = action;
+      document.getElementById("message-box").style.display = "block";
+      document.getElementById("message-title").innerText = (action === "accept") ? "Acceptance Message" : "Rejection Message";
+      document.getElementById("custom-message").value = "";
+    }
+    function hideMessageBox() {
+      document.getElementById("message-box").style.display = "none";
+    }
+    function generateAIMessage() {
+      const formData = new FormData();
+      formData.append("action", currentAction);
+      fetch("{{ url_for('generate_message') }}", {
+        method: "POST",
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById("custom-message").value = data.generated_message;
+      })
+      .catch(error => console.error("Error:", error));
+    }
+    function sendFinalMessage() {
+      const customMessage = document.getElementById("custom-message").value;
+      const checkboxes = document.querySelectorAll('input[name="selected_resume"]');
+      let selected = [];
+      checkboxes.forEach(chk => {
+        if (chk.checked) {
+          selected.push(chk.value);
+        }
+      });
+      const formData = new FormData();
+      formData.append("action", currentAction);
+      formData.append("custom_message", customMessage);
+      selected.forEach(val => formData.append("selected_resume", val));
+      fetch("{{ url_for('process_action') }}", {
+        method: "POST",
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        showModal(data.msg);
+        hideMessageBox();
+      })
+      .catch(error => console.error("Error:", error));
+    }
+    // Modal functions
+    function showModal(message) {
+      document.getElementById("final-message-text").innerText = message;
+      document.getElementById("final-message-modal").style.display = "block";
+    }
+    function closeModal() {
+      document.getElementById("final-message-modal").style.display = "none";
+    }
+  </script>
+</head>
+<body>
+  <center>
+    <img src="https://w7.pngwing.com/pngs/509/329/png-transparent-axis-bank-connaught-place-new-delhi-security-business-bank-purple-angle-violet-thumbnail.png" width="50" height="50" alt="Axis Bank Logo">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e8/HackerEarth_logo.png" width="50" height="50" alt="HackerEarth Logo">
+    <h1>Multi Resume Analyzer</h1>
+  </center>
+  <label id="dark-mode-toggle-label" for="dark-mode-toggle">
+    <input type="checkbox" id="dark-mode-toggle" onchange="toggleDarkMode()">
+    <div id="dark-mode-toggle-slider"></div>
+  </label>
+  <form action="/" method="post" enctype="multipart/form-data">
+    <label for="job_description">Job Description:</label>
+    <textarea name="job_description" rows="4" cols="50" required placeholder="Enter job details..."></textarea>
+    <br>
+    <label for="threshold">Threshold Percentage:</label>
+    <input type="number" name="threshold" step="0.1" value="80" required>
+    <br>
+    <label for="resume_files">Upload Resumes (PDF):</label>
+    <input type="file" name="resume_files" accept=".pdf" multiple required>
+    <br>
+    <input type="submit" value="Analyze Resumes">
+  </form>
+  <br>
+  <div id="response-message" class="flash-messages"></div>
+  {% if results %}
+  <div class="results-container">
+    <h2>Ranked Resumes:</h2>
+    <form id="selection_form">
+      <table>
+        <tr>
+          <th>Select</th>
+          <th>Rank</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Similarity (%)</th>
+          <th>Status</th>
+        </tr>
+        {% for result in results %}
+        <tr>
+          <td>
+            <input type="checkbox" name="selected_resume" value="{{ loop.index0 }}"
+                   data-name="{{ result.names[0] if result.names else 'N/A' }}"
+                   data-email="{{ result.emails[0] if result.emails else 'N/A' }}"
+                   {% if result.selected %} checked {% endif %}>
+          </td>
+          <td>{{ loop.index }}</td>
+          <td>{{ result.names[0] if result.names else "N/A" }}</td>
+          <td>{{ result.emails[0] if result.emails else "N/A" }}</td>
+          <td>{{ "%.2f"|format(result.similarity) }}</td>
+          <td>
+            {% if result.selected %}
+              <span style="color:green;">&#10004;</span>
+            {% else %}
+              <span style="color:red;">&#10008;</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </table>
+      <div class="button-row">
+        <div class="left-buttons">
+          <button type="button" onclick="showMessageBox('accept')" class="btn primary">Accept Resumes</button>
+          <button type="button" onclick="showMessageBox('reject')" class="btn secondary">Reject Resumes</button>
+        </div>
+        <div class="right-button">
+          <a href="{{ url_for('download_csv') }}" download="ranked_resumes.csv" class="download-link">
+            Download CSV
+          </a>
+        </div>
+      </div>
+    </form>
+  </div>
+  {% endif %}
+
+  <!-- Modal for final message -->
+  <div id="final-message-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeModal()">&times;</span>
+      <p id="final-message-text"></p>
+    </div>
+  </div>
+
+  <div id="message-box">
+    <h3 id="message-title"></h3>
+    <textarea id="custom-message" placeholder="Write your message here..."></textarea>
+    <br>
+    <button type="button" onclick="generateAIMessage()" class="btn secondary">Generate AI Message</button>
+    <button type="button" onclick="sendFinalMessage()" class="btn primary">Send Message</button>
+    <button type="button" onclick="hideMessageBox()" class="btn">Cancel</button>
+  </div>
+</body>
+</html>

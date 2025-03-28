@@ -1,0 +1,227 @@
+/* Reset default styles */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+
+/* Base styles (Light Mode) */
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f7f7f7;
+    color: #333;
+    padding: 20px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+
+/* Header styling */
+
+h1 {
+    margin-bottom: 20px;
+}
+
+
+/* Form styling */
+
+form {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+textarea,
+input[type="file"],
+input[type="number"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    margin-bottom: 10px;
+}
+
+input[type="submit"] {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+input[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+
+/* Table styling */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+table th,
+table td {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+table th {
+    background-color: #005288;
+    color: #fff;
+}
+
+table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+
+/* Button styling */
+
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+    margin-right: 10px;
+}
+
+.btn.primary {
+    background-color: #28a745;
+    color: #fff;
+}
+
+.btn.primary:hover {
+    background-color: #1e7e34;
+}
+
+.btn.secondary {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+.btn.secondary:hover {
+    background-color: #c82333;
+}
+
+
+/* Flash messages */
+
+.flash-messages {
+    background-color: #e7f3fe;
+    border-left: 4px solid #2196F3;
+    padding: 10px;
+    margin-bottom: 20px;
+    color: #31708f;
+}
+
+
+/* Download link */
+
+.download-link {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 15px;
+    text-decoration: none;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+.download-link:hover {
+    background-color: #0056b3;
+}
+
+
+/* Message box styling */
+
+#message-box {
+    background-color: #fff;
+    border: 2px solid #007bff;
+    border-radius: 8px;
+    padding: 25px;
+    margin-bottom: 20px;
+    width: 90%;
+    max-width: 800px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#message-box textarea {
+    width: 100%;
+    height: 300px;
+    padding: 15px;
+    font-size: 1.1rem;
+}
+
+
+/* Flex container for buttons in results section */
+
+.button-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.left-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+
+/* Dark Mode styles */
+
+body.dark-mode {
+    background-color: #1a1a1a;
+    color: #fff;
+}
+
+body.dark-mode form {
+    background-color: #2b2b2b;
+    box-shadow: none;
+}
+
+body.dark-mode table th {
+    background-color: #333;
+}
+
+body.dark-mode table tr:nth-child(even) {
+    background-color: #2b2b2b;
+}
+
+body.dark-mode .flash-messages {
+    background-color: #333;
+    border-left-color: #ff9800;
+    color: #fff;
+}
+
+body.dark-mode .download-link {
+    background-color: #ff9800;
+}
+
+body.dark-mode input[type="submit"] {
+    background-color: #ff9800;
+}
+
+body.dark-mode input[type="submit"]:hover {
+    background-color: #e68a00;
+}
