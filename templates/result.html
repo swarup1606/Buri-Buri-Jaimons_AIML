@@ -1,0 +1,26 @@
+
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Prediction Result</title>
+            <style>
+                body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+                .container { max-width: 600px; margin: 0 auto; }
+                .result { padding: 20px; border-radius: 5px; margin-top: 20px; }
+                .recommended { background-color: #dff0d8; border: 1px solid #d6e9c6; }
+                .not-recommended { background-color: #f2dede; border: 1px solid #ebccd1; }
+                a { display: inline-block; margin-top: 20px; color: #337ab7; text-decoration: none; }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <h1>Prediction Result</h1>
+                <div class="result {% if result.prediction %}recommended{% else %}not-recommended{% endif %}">
+                    <h2>{{ result.recommendation }}</h2>
+                    <p>Confidence: {{ "%.2f"|format(result.probability * 100) }}%</p>
+                </div>
+                <a href="/">Back to Prediction Form</a>
+            </div>
+        </body>
+        </html>
+        

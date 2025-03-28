@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Salary Predictor</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; }
+        input, select { width: 100%; padding: 8px; box-sizing: border-box; }
+        button { background: #4CAF50; color: white; padding: 10px 15px; border: none; cursor: pointer; }
+        .nav { margin-bottom: 20px; }
+        .nav a { margin-right: 15px; color: #337ab7; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav">
+            <a href="/">Candidate Predictor</a>
+            <a href="/salary">Salary Predictor</a>
+        </div>
+        <h1>Salary Predictor</h1>
+        <form action="/predict_salary" method="post">
+            <div class="form-group">
+                <label for="years_experience">Years of Experience</label>
+                <input type="number" name="years_experience" id="years_experience" step="0.5" min="0" required>
+            </div>
+            <div class="form-group">
+                <label for="education">Education</label>
+                <select name="education" id="education">
+                    <option value="High School">High School</option>
+                    <option value="Associate">Associate</option>
+                    <option value="Bachelor">Bachelor</option>
+                    <option value="Master">Master</option>
+                    <option value="PhD">PhD</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="job_level">Job Level</label>
+                <select name="job_level" id="job_level">
+                    <option value="Entry-level">Entry-level</option>
+                    <option value="Mid-level">Mid-level</option>
+                    <option value="Senior">Senior</option>
+                    <option value="Executive">Executive</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="industry">Industry</label>
+                <select name="industry" id="industry">
+                    <option value="Technology">Technology</option>
+                    <option value="Finance">Finance</option>
+                    <option value="Healthcare">Healthcare</option>
+                    <option value="Education">Education</option>
+                    <option value="Manufacturing">Manufacturing</option>
+                    <option value="Retail">Retail</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="location">Location</label>
+                <select name="location" id="location">
+                    <option value="Urban">Urban</option>
+                    <option value="Suburban">Suburban</option>
+                    <option value="Rural">Rural</option>
+                </select>
+            </div>
+            <button type="submit">Predict Salary</button>
+        </form>
+    </div>
+</body>
+</html>

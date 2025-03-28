@@ -1,0 +1,40 @@
+
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Salary Prediction Result</title>
+            <style>
+                body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+                .container { max-width: 600px; margin: 0 auto; }
+                .result { padding: 20px; border-radius: 5px; margin-top: 20px; background-color: #dff0d8; border: 1px solid #d6e9c6; }
+                .details { margin-top: 20px; padding: 15px; background-color: #f5f5f5; border-radius: 5px; }
+                .details h3 { margin-top: 0; }
+                .details p { margin: 5px 0; }
+                a { display: inline-block; margin-top: 20px; color: #337ab7; text-decoration: none; }
+                .nav { margin-bottom: 20px; }
+                .nav a { margin-right: 15px; color: #337ab7; text-decoration: none; }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="nav">
+                    <a href="/">Candidate Predictor</a>
+                    <a href="/salary">Salary Predictor</a>
+                </div>
+                <h1>Salary Prediction Result</h1>
+                <div class="result">
+                    <h2>Estimated Salary: {{ result.predicted_salary }}</h2>
+                </div>
+                <div class="details">
+                    <h3>Candidate Details</h3>
+                    <p><strong>Years of Experience:</strong> {{ result.candidate_data.years_experience }}</p>
+                    <p><strong>Education:</strong> {{ result.candidate_data.education }}</p>
+                    <p><strong>Job Level:</strong> {{ result.candidate_data.job_level }}</p>
+                    <p><strong>Industry:</strong> {{ result.candidate_data.industry }}</p>
+                    <p><strong>Location:</strong> {{ result.candidate_data.location }}</p>
+                </div>
+                <a href="/salary">Back to Salary Predictor</a>
+            </div>
+        </body>
+        </html>
+        

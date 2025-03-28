@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Salary Prediction Result</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .result { padding: 20px; border-radius: 5px; margin-top: 20px; background-color: #dff0d8; border: 1px solid #d6e9c6; }
+        .details { margin-top: 20px; padding: 15px; background-color: #f5f5f5; border-radius: 5px; }
+        .details h3 { margin-top: 0; }
+        .details p { margin: 5px 0; }
+        .chart-container { margin-top: 30px; display: flex; flex-wrap: wrap; justify-content: space-between; }
+        .chart-box { width: 48%; margin-bottom: 20px; padding: 15px; background-color: #f9f9f9; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        a { display: inline-block; margin-top: 20px; color: #337ab7; text-decoration: none; }
+        .nav { margin-bottom: 20px; }
+        .nav a { margin-right: 15px; color: #337ab7; text-decoration: none; }
+        @media (max-width: 768px) {
+            .chart-box { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav">
+            <a href="/">Candidate Predictor</a>
+            <a href="/salary">Salary Predictor</a>
+        </div>
+        <h1>Salary Prediction Result</h1>
+        <div class="result">
+            <h2>Estimated Salary: {{ result.predicted_salary }}</h2>
+        </div>
+        <div class="details">
+            <h3>Candidate Details</h3>
+            <p><strong>Years of Experience:</strong> {{ result.candidate_data.years_experience }}</p>
+            <p><strong>Education:</strong> {{ result.candidate_data.education }}</p>
+            <p><strong>Job Level:</strong> {{ result.candidate_data.job_level }}</p>
+            <p><strong>Industry:</strong> {{ result.candidate_data.industry }}</p>
+            <p><strong>Location:</strong> {{ result.candidate_data.location }}</p>
+        </div>
+        
+        <div class="chart-container">
+            <div class="chart-box">
+                <h3>Experience vs. Salary</h3>
+                <canvas id="experienceChart"></canvas>
+            </div>
+            <div class="chart-box">
+                <h3>Education Impact</h3>
+                <canvas id="educationChart"></canvas>
+            </div>
+            <div class="chart-box">
+                <h3>Industry Comparison</h3>
+                <canvas id="industryChart"></canvas>
+            </div>
+            <div class="chart-box">
+                <h3>Job Level Impact</h3>
+                <canvas id="levelChart"></canvas>
+            </div>
+        </div>
+        
+        <a href="/salary">Back to Salary Predictor</a>
+    </div>
+    
+    <script>
+        // Get chart data from the backend
+        const chartData = {
+            experience: {
+                labels: {{ result.chart_data.experience.labels|tojson }},
+                data: {{ result.chart_data.experience.data|tojson }}
+            },
+            education: {
+                labels: {{ result.chart_data.education.labels|tojson }},
+                data: {{ result.chart_data.education.data|tojson }}
+            },
+            industry: {
+                labels: {{ result.chart_data.industry.labels|tojson }},
+                data: {{ result.chart_data.industry.data|tojson }}
+            },
+            jobLevel: {
+                labels: {{ result.chart_data.job_level.labels|tojson }},
+                data: {{ result.chart_data.job_level.data|tojson }}
+            }
+        };
+        
+        // Create the datasets
+        const experienceData = {
+            labels: chartData.experience.labels,
+            datasets: [{
+                label: 'Salary Trend',
+                data: chartData.experience.data,
+                borderColor: 'rgba(75, 192, 192, 1)',
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                tension: 0.3,
+                fill: true
+            }]
+        };
+        
+        const educationData = {
+            labels: chartData.education.labels,
+            datasets: [{
+                label: 'Average Salary',
+                data: chartData.education.data,
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.5)',
+                    'rgba(54, 162, 235, 0.5)',
+                    'rgba(255, 206, 86, 0.5)',
+                    'rgba(75, 192, 192, 0.5)',
+                    'rgba(153, 102, 255, 0.5)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)'
+                ],
+                borderWidth: 1
+            }]
+        };
+        
+        const industryData = {
+            labels: chartData.industry.labels,
+            datasets: [{
+                label: 'Average Salary',
+                data: chartData.industry.data,
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.5)',
+                    'rgba(54, 162, 235, 0.5)',
+                    'rgba(255, 206, 86, 0.5)',
+                    'rgba(75, 192, 192, 0.5)',
+                    'rgba(153, 102, 255, 0.5)',
+                    'rgba(255, 159, 64, 0.5)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 1
+            }]
+        };
+        
+        const levelData = {
+            labels: chartData.jobLevel.labels,
+            datasets: [{
+                label: 'Average Salary',
+                data: chartData.jobLevel.data,
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.5)',
+                    'rgba(54, 162, 235, 0.5)',
+                    'rgba(255, 206, 86, 0.5)',
+                    'rgba(75, 192, 192, 0.5)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)'
+                ],
+                borderWidth: 1
+            }]
+        };
+        
+        // Create charts
+        window.onload = function() {
+            // Experience Chart
+            new Chart(document.getElementById('experienceChart'), {
+                type: 'line',
+                data: experienceData,
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Salary ($)'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Years of Experience'
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Education Chart
+            new Chart(document.getElementById('educationChart'), {
+                type: 'bar',
+                data: educationData,
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Salary ($)'
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Industry Chart
+            new Chart(document.getElementById('industryChart'), {
+                type: 'bar',
+                data: industryData,
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Salary ($)'
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Level Chart
+            new Chart(document.getElementById('levelChart'), {
+                type: 'bar',
+                data: levelData,
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Salary ($)'
+                            }
+                        }
+                    }
+                }
+            });
+        };
+    </script>
+</body>
+</html>
